@@ -13,12 +13,14 @@ import xarray as xr
 
 ####################you will need to change some paths here!#####################
 #list of input files
-filename_cpr='f:/data/project_data/NASA_biophysical/CPR_data/All CPR Sample catalogue.xlsx'
-filename_northpac_eddies='F:/data/project_data/NASA_biophysical/aviso/eddy_trajectory_19930101_20170106_north_pacific.nc'
-filename_cpr_eddy='F:/data/project_data/NASA_biophysical/collocated_data/CPR/eddy_cpr_data_north_pacific.nc'
-filename_eddy='F:/data/project_data/NASA_biophysical/collocated_data/CPR/eddy_ranking_data_north_pacific.nc'
+adir = 'f:/data/project_data/NASA_biophysical/'
+filename_cpr=adir + 'CPR_data/All CPR Sample catalogue.xlsx'
+filename_northpac_eddies=adir + '/aviso/eddy_trajectory_19930101_20170106_north_pacific_2020_10_06a.nc'
+filename_cpr_eddy=adir + '/collocated_data/CPR/eddy_cpr_data_north_pacific.nc'
+filename_eddy=adir + '/collocated_data/CPR/eddy_ranking_data_north_pacific.nc'
 #output files
-filename_cpr_expanded='F:/data/project_data/NASA_biophysical/collocated_data/CPR/All CPR Sample catalogue with env info_2020_10_05'
+filename_cpr_expanded=aidr + '/collocated_data/CPR/All CPR Sample catalogue with env info_2020_10_05a'
+fname_topo = 'F:/data/topo/ETOPO1_Ice_g_gmt4.grd'
 #################################################################################
 
 
@@ -49,7 +51,6 @@ ds_eddy_cpr = xr.open_dataset(filename_cpr_eddy)
 
 
 #get bathymetry from ETOPO1
-fname_topo = 'F:/data/topo/ETOPO1_Ice_g_gmt4.grd'
 ds = xr.open_dataset(fname_topo)
 ds_topo = ds.rename_dims({'x':'lon','y':'lat'}).rename({'x':'lon','y':'lat'})
 #tem = ds_topo.isel(lat=slice(7000,9500),lon=slice(0,4500))
