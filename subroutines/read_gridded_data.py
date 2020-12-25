@@ -3,6 +3,8 @@
 
 # In[ ]:
 
+#updated 12/25/2020 to use zarr data
+
 
 def get_monthly_data(stype):
     from pathlib import Path
@@ -21,14 +23,16 @@ def get_monthly_data(stype):
         ds = ds.assign_coords(lon=(((ds.lon + 180) % 360) - 180)).sortby('lon').sortby('lat')
         ds = ds.resample(time='M',keep_attrs=True).mean(skipna=False,keep_attrs=True)
     if np.char.lower(stype)=='ccmp':
-        filelist=[]
-        dir_data = 'F:/data/sat_data/ccmp/v02.0/'
-        for filename in Path(dir_data).rglob('*L3.0_RSS.nc'):
-            filelist.append(filename)
-            ds=xr.open_mfdataset(filelist,combine='nested',concat_dim='time').rename({'latitude':'lat','longitude':'lon'})
+        dir_data = 'F:/data/sat_data/ccmp/'
+        ds = xr.open_zarr(dir_data+'zarr2',consolidated=True).rename({'latitude':'lat','longitude':'lon'})
+#        filelist=[]
+#        dir_data = 'F:/data/sat_data/ccmp/v02.0/'
+#        for filename in Path(dir_data).rglob('*L3.0_RSS.nc'):
+#            filelist.append(filename)
+#            ds=xr.open_mfdataset(filelist,combine='nested',concat_dim='time').rename({'latitude':'lat','longitude':'lon'})
         ds = ds.assign_coords(lon=(((ds.lon + 180) % 360) - 180)).sortby('lon').sortby('lat')
-        _, index = np.unique(ds['time'], return_index=True)
-        ds=ds.isel(time=index)           
+#        _, index = np.unique(ds['time'], return_index=True)
+#        ds=ds.isel(time=index)           
         ds = ds.resample(time='M',keep_attrs=True).mean(skipna=False,keep_attrs=True)
     if np.char.lower(stype)=='mur_sst':
         filelist=[]
@@ -38,19 +42,23 @@ def get_monthly_data(stype):
         ds=xr.open_mfdataset(filelist,combine='nested',concat_dim='time').drop({'analysis_error'})
         ds = ds.resample(time='M',keep_attrs=True).mean(skipna=False,keep_attrs=True)
     if np.char.lower(stype)=='cmc_sst':
+        dir_data='F:\data\sat_data\sst\cmc\zarr'
+        ds = xr.open_zarr(dir_data)
+#        dir_data='F:\data\sat_data\sst\cmc\zarr'
+#        ds = xr.open_zarr(dir_data+'zarr2',consolidated=True)
         #combine 0.2 and 0.1 deg data into 0.2 dataset
-        filelist=[]
-        dir_data = 'F:/data/sst/cmc/CMC0.2deg/v2/data/'
-        for filename in Path(dir_data).rglob('*CMC-L4_GHRSST-SSTfnd-CMC0.2deg-GLOB-v02.0-fv02.0.nc'):
-            filelist.append(filename)
-        ds=xr.open_mfdataset(filelist,combine='nested',concat_dim='time')
-        filelist=[]
-        dir_data = 'F:/data/sst/cmc/CMC0.1deg/v3/'
-        for filename in Path(dir_data).rglob('*CMC-L4_GHRSST-SSTfnd-CMC0.1deg-GLOB-v02.0-fv03.0.nc'):
-            filelist.append(filename)
-        ds2=xr.open_mfdataset(filelist,combine='nested',concat_dim='time')
-        ds2=ds2.interp(lat=ds.lat,lon=ds.lon)
-        ds=xr.concat([ds,ds2],dim='time')       
+#        filelist=[]
+#        dir_data = 'F:/data/sst/cmc/CMC0.2deg/v2/data/'
+#        for filename in Path(dir_data).rglob('*CMC-L4_GHRSST-SSTfnd-CMC0.2deg-GLOB-v02.0-fv02.0.nc'):
+#            filelist.append(filename)
+#        ds=xr.open_mfdataset(filelist,combine='nested',concat_dim='time')
+#        filelist=[]
+#        dir_data = 'F:/data/sst/cmc/CMC0.1deg/v3/'
+#        for filename in Path(dir_data).rglob('*CMC-L4_GHRSST-SSTfnd-CMC0.1deg-GLOB-v02.0-fv03.0.nc'):
+#            filelist.append(filename)
+#        ds2=xr.open_mfdataset(filelist,combine='nested',concat_dim='time')
+#        ds2=ds2.interp(lat=ds.lat,lon=ds.lon)
+#        ds=xr.concat([ds,ds2],dim='time')       
         ds = ds.assign_coords(lon=(((ds.lon + 180) % 360) - 180)).sortby('lon').sortby('lat')
         ds = ds.resample(time='M',keep_attrs=True).mean(skipna=False,keep_attrs=True)
     if np.char.lower(stype)=='cmem_sss':
@@ -63,12 +71,16 @@ def get_monthly_data(stype):
         ds = ds.assign_coords(lon=(((ds.lon + 180) % 360) - 180)).sortby('lon').sortby('lat')
         ds = ds.resample(time='M',keep_attrs=True).mean(skipna=False,keep_attrs=True)
     if np.char.lower(stype)=='aviso':
-        filelist=[]
-        dir_data = 'F:/data/sat_data/aviso/data/'
-        from pathlib import Path
-        for filename in Path(dir_data).rglob('*.nc'):
-            filelist.append(filename)
-        ds=xr.open_mfdataset(filelist,combine='nested',concat_dim='time').drop({'ugosa','vgosa','err'}).rename({'latitude':'lat','longitude':'lon'})
+        dir_data = 'F:/data/sat_data/aviso/zarr2'
+        ds = xr.open_zarr(dir_data,consolidated=True).rename({'latitude':'lat','longitude':'lon'})
+#        dir_data = 'F:/data/sat_data/aviso/zarr2'
+#        ds = xr.open_zarr(dir_data+'zarr2',consolidated=True).rename({'latitude':'lat','longitude':'lon'})
+#        filelist=[]
+#        dir_data = 'F:/data/sat_data/aviso/data/'
+#        from pathlib import Path
+#        for filename in Path(dir_data).rglob('*.nc'):
+#            filelist.append(filename)
+#      ds=xr.open_mfdataset(filelist,combine='nested',concat_dim='time').drop({'ugosa','vgosa','err'}).rename({'latitude':'lat','longitude':'lon'})
         ds = ds.assign_coords(lon=(((ds.lon + 180) % 360) - 180)).sortby('lon').sortby('lat')
         ds = ds.resample(time='M',keep_attrs=True).mean(skipna=False,keep_attrs=True)
     return ds
